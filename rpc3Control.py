@@ -115,6 +115,10 @@ class rpc3Control:
         for line in self.child.before.split('\n'):
             if line.rstrip() == "" and inlist:
                 inlist = False
+            
+            #without the below check i would get parse errors randomly when checking state
+            if line.rstrip() == "    5)...Reset Unit" and inlist:
+                inlist = False
 
             if inlist:
                 m = re.match('^ .....([0-9]) ..... (...........) ([0-9]) ..... (On|Off)',line)
