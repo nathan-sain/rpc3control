@@ -11,6 +11,7 @@ from pexpect import *
 import sys
 import re
 import syslog
+import time
 
 class rpc3ControlError(Exception):
     def __init__(self, value):
@@ -84,30 +85,37 @@ class rpc3Control:
         """
 
         if state not in ("on", "off", "reboot"):
+            self.child.send("6\r")
             raise rpc3ControlError('Invalid outlet state')
 
         if int(outlet_number) > 8 or int(outlet_number) < 1:
+            self.child.send("6\r")
             return None
         
         self.es("Enter Selection>", "1")
         self.es("RPC-3>", "%s %d\rY"  % (state, outlet_number) )
         self.es("RPC-3>", "MENU")
+        time.sleep(0.1)
 
         self.statuscached = False
 
+        self.child.send("6\r")
         return True
 
     def outlet_status(self, outlet_number, ignore_cache = False):
         """ Get the status of an outlet """
         
         if self.statuscached == True and ignore_cache != True:
+            self.child.send("6\r")
             return (self.status[outlet_number],self.name[outlet_number])
 
         if int(outlet_number) > 8 or int(outlet_number) < 1:
+            self.child.send("6\r")
             return None
 
         self.es("Enter Selection>", "1")
         self.es("RPC-3>", "MENU")
+        time.sleep(0.1)
 
         # parse the output
         inlist = False
@@ -134,6 +142,7 @@ class rpc3Control:
                 inlist = True
 
         self.statuscached = True
+        self.child.send("6\r")
         return (self.status[outlet_number],self.name[outlet_number])
 
 # fetch credentials
