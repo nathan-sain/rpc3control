@@ -42,8 +42,8 @@ class rpc3Control:
         """
 
         """ get unit id """
-        self.child.expect([".*Unit ID: (.*)", EOF, TIMEOUT]) 
-        self.unitid = self.child.match.group(1)
+        #self.child.expect([".*Unit ID: (.*)", EOF, TIMEOUT], timeout=3) 
+        #self.unitid = self.child.match.group(1)
         
         if user != None:
             self.es("Enter username>", user)
@@ -57,6 +57,7 @@ class rpc3Control:
         """
 
         result = self.child.expect([str_expect, EOF, TIMEOUT])
+        #print(str(self.child))
 
         if result == 0: 
             self.child.send("%s\r" % str_send)
@@ -71,7 +72,8 @@ class rpc3Control:
     def connect(self):
         if self.child == None:
             self.child = spawn("telnet " + self.hostname)
-            result = self.child.expect(["Connected to", EOF, TIMEOUT])
+            result = self.child.expect(["Connected to", EOF, TIMEOUT], timeout=3)
+            #print(str(self.child))
             self.child.send("\r")
 
         if self.debug == True:
@@ -95,7 +97,7 @@ class rpc3Control:
         self.es("Enter Selection>", "1")
         self.es("RPC-3>", "%s %d\rY"  % (state, outlet_number) )
         self.es("RPC-3>", "MENU")
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
         self.statuscached = False
 
@@ -115,7 +117,7 @@ class rpc3Control:
 
         self.es("Enter Selection>", "1")
         self.es("RPC-3>", "MENU")
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
         # parse the output
         inlist = False
