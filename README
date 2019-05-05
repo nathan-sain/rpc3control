@@ -8,3 +8,5 @@ The .sh versions of the scripts simply call the py versions. I configure the hom
 You should pass the sh scripts the outlet number as the first parameter and the user name as the second parameter.
 Though right now the py versions of the on,off and state scripts all hardcode the username to "None".  
 My RPC 3 unit is set to not ask for username or password.
+
+http://www.copyerror.com/2014/04/25/baytech-rpc3-remote-power-controller/
