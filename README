@@ -1,62 +1,7 @@
-This is a set of classes (and bundled pure-python versions of pexpect
-and ping) to control a Baytech RPC3. 
-
-pexpect is courtesy of Noah Spurrier 
-http://www.noah.org/wiki/pexpect
-
-Pure Python Ping code Ping is Copyright (c) Matthew Dixon Cowles,
-http://www.visi.com/~mdc/
-
-Uses jQuery 1.7.2 and jqTouch for iPhone/iPad like access.
-
-USAGE
------
-
-Create a file in your working directory called ".credentials". This file
-should contain the following:
-
-IP address of RPC3:username:password:webip1,webip2,webip3... 
-
-Then, in your script, you can call:
-
-from rpc3Control import *
-(RPC, RPCUSER, RPCPASS, WHITELIST) = load_credentials()
-
-""" or, if you change the credentials filename, you can do... """
-(RPC, RPCUSER, RPCPASS, WHITELIST) = load_credentials("filename")
-
-Control is pretty straightfoward. First, connect to the RPC:
-(Instantiating an instance of the class will handle the initial connection)
-
-r = rpc3Control(RPC, RPCUSER, RPCPASS, False)
-
-...and then you can issue commands, like:
-
-r.outlet(5,"on")
-r.outlet(5,"off")
-r.outlet(5,"reboot")
-
-To get status, use outlet_status, which will return True or False for On or Off.
-
-state = r.outlet_status(5)
-
-I'm using this at home to restart my DSL modem in the event of network failure. 
-
-For a more indepth example, see the check_dsl.py script.
-
-Web Access
-----------
-
-Included with this code is a functional, HTML5/CSS administration
-system that can be used to control your devices from an iPhone, iPad,
-or web browser.
-
-To use, copy the "web" folder to your webserver, ensure that index.cgi
-can be executed as a cgi and that rpc3Control.py can be accessed from
-your web server, either by installing it system wide or by copying it
-into the web folder.
-
----
-John Adams
-May, 2012
-
+I use this in combination with homebridge and homebridge script plugins. 
+These are plugins that allow you to execute scripts to turn on and off and check state of difference devices.
+I use this one https://github.com/luisiam/homebridge-cmdswitch2.
+I've written the on.py, off.py, and state.py scripts to be able to use the RPC3 outlets with homekit and the home app.
+The .sh versions of the scripts simply call the py versions. I configure the homebridge plugin to execute the sh scripts.
+There were some challenges with number of telnet sessions that the RPC3 unit allows at a time. 
+I've tried to minimize having to telnet into the RPC3 unit by using a status file to keep track of outlet status.
