@@ -40,7 +40,7 @@ class rpc3Control:
       #  so we support both of those cases in this code.
 
         # get unit id
-        check = self.child.expect([".*Unit ID: (.*)", EOF, TIMEOUT], timeout=2)
+        check = self.child.expect([".*Unit ID: (.*)", EOF, TIMEOUT], timeout=3)
         if check == 0:
                 self.unitid = self.child.match.group(1)
         if check > 0:
@@ -63,10 +63,11 @@ class rpc3Control:
         return False
 
     def es(self,str_expect,str_send):
-        # a pexpect helper method; expect and send with error monitoring
 
-        result = self.child.expect([str_expect, EOF, TIMEOUT], timeout=2)
-#       print(str(self.child))
+       # a pexpect helper method; expect and send with error monitoring
+
+        result = self.child.expect([str_expect, EOF, TIMEOUT], timeout=3)
+#        print(str(self.child))
 
         if result == 0:
             self.child.send("%s\r" % str_send)
@@ -81,9 +82,9 @@ class rpc3Control:
     def connect(self):
         if self.child == None:
             self.child = spawn("telnet " + self.hostname)
-            result = self.child.expect(["Connected to", EOF, TIMEOUT], timeout=2)
+            result = self.child.expect(["Connected to", EOF, TIMEOUT], timeout=3)
 #           print (self.child)
-            self.child.send("\r")
+#            self.child.send("\r")
 
         if self.debug == True:
             self.child.logfile = sys.stdout
@@ -161,7 +162,7 @@ class rpc3Control:
         else:
                 self.child.terminate()
 
-        #Write all outlet status to file and lock the file. Doing this because i use this script with homebridge and siri executes the script to get status for each outloet$
+        #Write all outlet status to file and lock the file. Doing this because i use this script with homebridge and siri executes the script to get status for each outloet. The RPC unit allows only 4 telnet sesions for user admin at a time. I have homebridge use the this status file instead of logging in if the status file is recent.
         lock_filename = 'telnetrunning.txt'
         frunning = open(lock_filename,'w+')
         while True:
@@ -176,8 +177,8 @@ class rpc3Control:
                                 time.sleep(0.05)
 
         i=1
-        sttime = str(int(round(time.time() * 100)))
-        frunning.write(sttime + "\r\n")
+        sttime = str(int(round(time.time() * 1000)))
+        frunning.write(sttime + "," + str(outlet_number) + ",\r\n")
         while  (i <= 8):
                 writeText = "%d," % (i)
                 stringOutletStatus = "%s," % self.status[i]
