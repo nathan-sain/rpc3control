@@ -1,5 +1,5 @@
 I use this in combination with homebridge and homebridge script plugins. 
-These are plugins that allow you to execute scripts to turn on and off and check state of difference devices.
+These are plugins that allow you to execute scripts to turn on and off and check state of different devices.
 I use this one https://github.com/luisiam/homebridge-cmdswitch2.
 I've written the on.py, off.py, and state.py scripts to be able to use the RPC3 outlets with homekit and the home app.
 There were some challenges with number of telnet sessions that the RPC3 unit allows at a time. 
