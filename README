@@ -9,5 +9,11 @@ You should pass the sh scripts the outlet number as the first parameter and the 
 Though right now the py versions of the on,off and state scripts all hardcode the username to "None".  
 My RPC 3 unit is set to not ask for username or password.
 
+More info on the Baytech RPC3 
 http://www.copyerror.com/2014/04/25/baytech-rpc3-remote-power-controller/
 https://www.servethehome.com/baytech-rpc3-deal-remote-switched-8port-pdu-50-windows-app/
+
+This script requires pexpect
+https://github.com/pexpect/pexpect
+Install using pip:
+pip install pexpect
