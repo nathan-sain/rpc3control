@@ -83,8 +83,8 @@ class rpc3Control:
         if self.child == None:
             self.child = spawn("telnet " + self.hostname)
             result = self.child.expect(["Connected to", EOF, TIMEOUT], timeout=3)
-#           print (self.child)
-#            self.child.send("\r")
+            #print (self.child)
+            #self.child.send("\r")
 
         if self.debug == True:
             self.child.logfile = sys.stdout
@@ -97,10 +97,12 @@ class rpc3Control:
 
         if state not in ("on", "off", "reboot"):
             self.child.send("6\r")
+            self.child.terminate()
             raise rpc3ControlError('Invalid outlet state')
 
         if int(outlet_number) > 8 or int(outlet_number) < 1:
             self.child.send("6\r")
+            self.child.terminate()
             return None
 
         self.es("Enter Selection>", "1")
@@ -109,6 +111,7 @@ class rpc3Control:
 
         self.statuscached = False
         self.child.send("6\r")
+        self.child.terminate()
 
         return True
 
@@ -116,18 +119,22 @@ class rpc3Control:
         # Get the status of an outlet
 
         if self.statuscached == True and ignore_cache != True:
-            self.child.send("6\r")
+            if self.user == "admin" or self.user == None:
+                self.child.send("6\r")
+            else:
+                self.child.send("LOGOUT\r")
             return (self.status[outlet_number],self.name[outlet_number])
 
         if int(outlet_number) > 8 or int(outlet_number) < 1:
-            self.child.send("6\r")
+            if self.user == "admin" or self.user == None:
+                self.child.send("6\r")
+            else:
+                self.child.send("LOGOUT\r")
             return None
 
         if self.user == "admin" or self.user == None:
                 self.es("Enter Selection>", "1")
                 self.es("RPC-3>", "MENU")
-        else:
-                self.es("RPC-3>", "LOGOUT")
 
         # parse the output
         inlist = False
@@ -160,6 +167,7 @@ class rpc3Control:
                 self.child.send("6\r")
                 self.child.terminate()
         else:
+                self.child.send("LOGOUT\r")
                 self.child.terminate()
 
         #Write all outlet status to file and lock the file. Doing this because i use this script with homebridge and siri executes the script to get status for each outloet. The RPC unit allows only 4 telnet sesions for user admin at a time. I have homebridge use the this status file instead of logging in if the status file is recent.
