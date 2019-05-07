@@ -62,3 +62,4 @@ if (fileexists):
                         i=i+1
                 fcntl.flock(my_file, fcntl.LOCK_UN)
                 my_file.close()
+                sys.exit()
