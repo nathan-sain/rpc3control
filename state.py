@@ -33,6 +33,8 @@ fileexists = file_exists("/var/homebridge/rpc3control/", lock_filename)
 #In this script for any outlet other than outlet 1, I wait for the status file to be created by the outlet 1 state script execution from homekit if it does not exist.
 
 if OUTLET != 1:
+        #testing giving outlet 1 a headstart
+        time.sleep(0.07)
         i=0
         while (not fileexists and i<=50):
                 try:
@@ -65,8 +67,9 @@ if (fileexists):
         #if it's been less than 2 hours since the last status check and if the status file does not have the updated flag marked, i skip telneting and just pull status from the status file.
         if (delta <= delta_init and statearray[0][1]!="updated"):
                 print status
+                sys.exit()
 
-#Only outlet 1 is alloed to telnet and check/confirms updated status. It updates the status file with latest settings if the status file  was recently updated (doublechecking that the update succeed$
+#Only outlet 1 is alloed to telnet and check/confirms updated status. It updates the status file with latest settings if the status file  was recently updated (doublechecking that the update succeeded) .
 #It will also telnet in and upadte status if it's been over 2 hours since the last time the status file was updated
 if ((delta > delta_init or statearray[0][1]=="updated") and OUTLET == 1):
         (RPC, RPCUSER, RPCPASS, WHITELIST) = load_credentials("/var/homebridge/rpc3control/.credentials")
@@ -76,8 +79,10 @@ if ((delta > delta_init or statearray[0][1]=="updated") and OUTLET == 1):
         (status,name) = r.outlet_status(OUTLET)
         if (status == "True"):
                 print status
+                sys.exit()
         else:
                 print status
+                sys.exit()
 #Outlets other than outlet 1  should get latest update from status file as outlet 1 status file update  may have updated things. see if statement above.
 if ((delta > delta_init or statearray[0][1]=="updated") and OUTLET != 1):
         with open(lock_filename,'r') as my_file:
@@ -96,3 +101,4 @@ if ((delta > delta_init or statearray[0][1]=="updated") and OUTLET != 1):
                 my_file.close()
         status = statearray[OUTLET][1]
         print status
+        sys.exit()
